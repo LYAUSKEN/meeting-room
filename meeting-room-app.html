@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>会議室予約</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BASE
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0D0D0D;
+  --surface:  #161616;
+  --card:     #1C1C1C;
+  --border:   #2E2E2E;
+  --border2:  #3A3A3A;
+  --text:     #E8E8E8;
+  --muted:    #888;
+  --faint:    #444;
+  --serif:    'Noto Serif JP', serif;
+  --sans:     'Noto Sans JP', sans-serif;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+#app { max-width: 480px; margin: 0 auto; padding: 0 0 80px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   HEADER
+============================================================ */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.app-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+.header-actions { display: flex; gap: 8px; align-items: center; }
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.user-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 2px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.icon-btn:hover { border-color: var(--text); color: var(--text); }
+
+/* ============================================================
+   CALENDAR NAV
+============================================================ */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+}
+
+.cal-month {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.cal-nav-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 32px; height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+.cal-nav-btn:hover { border-color: var(--text); color: var(--text); }
+
+/* ============================================================
+   CALENDAR GRID
+============================================================ */
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 10px;
+  color: var(--faint);
+  letter-spacing: 0.1em;
+  padding: 4px 0;
+}
+.cal-weekday:first-child { color: #8B2222; }
+.cal-weekday:last-child  { color: #1A4A8B; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.cal-cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 2px 2px;
+  cursor: pointer;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+  position: relative;
+  min-height: 44px;
+}
+
+.cal-cell:hover { background: var(--card); border-color: var(--border); }
+.cal-cell.today .cal-day-num { color: var(--text); font-weight: 700; }
+.cal-cell.today::after {
+  content: '';
+  position: absolute;
+  bottom: 3px; left: 50%;
+  transform: translateX(-50%);
+  width: 4px; height: 4px;
+  background: var(--text);
+  border-radius: 50%;
+}
+.cal-cell.other-month .cal-day-num { color: var(--faint); }
+.cal-cell.sunday  .cal-day-num { color: #8B2222; }
+.cal-cell.saturday .cal-day-num { color: #1A4A8B; }
+.cal-cell.selected { background: var(--card); border-color: var(--border2); }
+
+.cal-day-num {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.cal-dots {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.cal-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DAY PANEL
+============================================================ */
+.day-panel {
+  margin: 12px 16px 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.day-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.day-panel-title {
+  font-family: var(--serif);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+
+.add-btn {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 5px 14px;
+  font-family: var(--sans);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 1px;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s;
+}
+.add-btn:hover { opacity: 0.85; }
+.add-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.booking-list { padding: 0; }
+
+.booking-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--faint);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+.booking-item {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.booking-item:last-child { border-bottom: none; }
+.booking-item:hover { background: var(--surface); }
+
+.booking-color-bar {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.booking-body {
+  flex: 1;
+  padding: 10px 12px;
+}
+
+.booking-time {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.booking-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.booking-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.booking-owner {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.booking-owner-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+
+.booking-members {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.booking-delete-btn {
+  background: none;
+  border: none;
+  color: var(--faint);
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.15s;
+  flex-shrink: 0;
+  align-self: center;
+}
+.booking-delete-btn:hover { color: #E74C3C; }
+
+/* ============================================================
+   MODAL
+============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 100;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 20px 32px;
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+
+.form-group { margin-bottom: 16px; }
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 10px 12px;
+  font-family: var(--sans);
+  font-size: 14px;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--text);
+}
+.form-textarea { resize: vertical; min-height: 60px; }
+
+.time-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.time-sep { text-align: center; color: var(--muted); font-size: 18px; }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+.btn-primary {
+  flex: 1;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 12px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-secondary {
+  flex: 1;
+  background: none;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+  padding: 12px;
+  font-family: var(--sans);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { border-color: var(--text); color: var(--text); }
+
+.btn-danger {
+  background: #8B1A1A;
+  color: #FFD0D0;
+  border: none;
+  padding: 12px;
+  font-family: var(--sans);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.15s;
+}
+.btn-danger:hover { opacity: 0.85; }
+
+/* ============================================================
+   DETAIL MODAL
+============================================================ */
+.detail-color-header {
+  height: 4px;
+  margin: -24px -20px 20px;
+  border-radius: 4px 4px 0 0;
+}
+
+.detail-time {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.detail-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.detail-section {
+  margin-bottom: 12px;
+}
+
+.detail-section-label {
+  font-size: 10px;
+  color: var(--faint);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.detail-owner-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.detail-owner-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+.detail-members {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: 2px;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+.toast.error { background: #8B1A1A; color: #FFD0D0; }
+
+/* ============================================================
+   LOGIN / AUTH
+============================================================ */
+.auth-screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+}
+
+.auth-logo {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 40px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px 24px;
+}
+
+.auth-card-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.auth-switch span {
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pin-input {
+  letter-spacing: 0.5em;
+  text-align: center;
+  font-size: 20px;
+}
+
+/* ============================================================
+   BOTTOM NAV
+============================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 10;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  cursor: pointer;
+  color: var(--faint);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  transition: color 0.15s;
+  border: none;
+  background: none;
+  gap: 4px;
+}
+.nav-item.active { color: var(--text); }
+.nav-item:hover { color: var(--muted); }
+
+.nav-icon { font-size: 18px; line-height: 1; }
+
+/* ============================================================
+   LIST VIEW
+============================================================ */
+.list-section {
+  padding: 0 16px;
+  margin-top: 12px;
+}
+
+.list-date-group { margin-bottom: 16px; }
+
+.list-date-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  padding: 8px 0 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+
+.list-booking-item {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+  overflow: hidden;
+}
+.list-booking-item:hover { background: var(--card); }
+
+.list-color-bar { width: 4px; flex-shrink: 0; }
+.list-body { flex: 1; padding: 10px 12px; }
+
+.list-time { font-size: 11px; color: var(--muted); }
+.list-title { font-size: 14px; font-weight: 500; margin: 2px 0; }
+.list-owner { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.list-owner-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ============================================================
+   ADMIN
+============================================================ */
+.admin-section { padding: 16px; }
+.admin-section-title {
+  font-family: var(--serif);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-user-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.admin-user-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--faint);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+}
+
+.error-msg {
+  color: #E74C3C;
+  font-size: 12px;
+  margin-top: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     設定：GAS の URL をここに入力
+============================================================ -->
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbytIjWBo_eyZAz8MW0fXIdlSUyz9kvmeP7HXkFpz22vkWp0ajsirEIcBJ7sGc3vsxb41A/exec";
+</script>
+
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-logo">会議室予約</div>
+  <div class="auth-subtitle">MEETING ROOM RESERVATION</div>
+
+  <div class="auth-card" id="login-card">
+    <div class="auth-card-title">ログイン</div>
+    <div class="form-group">
+      <label class="form-label">名前</label>
+      <input class="form-input" id="login-name" placeholder="あなたの名前">
+    </div>
+    <div class="form-group">
+      <label class="form-label">PIN（4桁）</label>
+      <input class="form-input pin-input" id="login-pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+    </div>
+    <div id="login-error" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="doLogin()">ログイン</button>
+    </div>
+    <div class="auth-switch">
+      はじめて利用する方は <span onclick="showRegister()">新規登録</span>
+    </div>
+    <div class="auth-switch" style="margin-top:8px;">
+      管理者の方は <span onclick="showAdminLogin()">管理者ログイン</span>
+    </div>
+  </div>
+
+  <div class="auth-card" id="register-card" style="display:none;">
+    <div class="auth-card-title">新規登録</div>
+    <div class="form-group">
+      <label class="form-label">名前</label>
+      <input class="form-input" id="reg-name" placeholder="あなたの名前">
+    </div>
+    <div class="form-group">
+      <label class="form-label">PIN（4桁）を決めてください</label>
+      <input class="form-input pin-input" id="reg-pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+    </div>
+    <div class="form-group">
+      <label class="form-label">PIN 確認</label>
+      <input class="form-input pin-input" id="reg-pin2" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+    </div>
+    <div id="reg-error" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="showLogin()">戻る</button>
+      <button class="btn-primary" onclick="doRegister()">登録</button>
+    </div>
+  </div>
+
+  <div class="auth-card" id="admin-login-card" style="display:none;">
+    <div class="auth-card-title">管理者ログイン</div>
+    <div class="form-group">
+      <label class="form-label">管理者パスワード</label>
+      <input class="form-input" id="admin-login-pass" type="password" placeholder="パスワード">
+    </div>
+    <div id="admin-login-error" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="showLogin()">戻る</button>
+      <button class="btn-primary" onclick="doAdminLogin()">ログイン</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none;">
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-title">会議室予約</div>
+      <div class="header-actions">
+        <div class="user-badge" onclick="logout()" id="user-badge">
+          <div class="user-dot" id="user-dot-header"></div>
+          <span id="user-name-header"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Calendar Page -->
+    <div id="page-calendar" class="page active">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+        <div class="cal-month" id="cal-month-label"></div>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+      </div>
+
+      <div class="cal-weekdays">
+        <div class="cal-weekday">日</div>
+        <div class="cal-weekday">月</div>
+        <div class="cal-weekday">火</div>
+        <div class="cal-weekday">水</div>
+        <div class="cal-weekday">木</div>
+        <div class="cal-weekday">金</div>
+        <div class="cal-weekday">土</div>
+      </div>
+
+      <div class="cal-grid" id="cal-grid"></div>
+
+      <div class="day-panel" id="day-panel" style="display:none;">
+        <div class="day-panel-header">
+          <div class="day-panel-title" id="day-panel-title"></div>
+          <button class="add-btn" id="add-booking-btn" onclick="openBookingModal()">＋ 予約</button>
+        </div>
+        <div class="booking-list" id="day-booking-list"></div>
+      </div>
+    </div>
+
+    <!-- List Page -->
+    <div id="page-list" class="page">
+      <div class="list-section" id="list-section">
+        <div class="loading">読み込み中…</div>
+      </div>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="page-admin" class="page">
+      <div class="admin-section">
+        <div class="admin-section-title">管理者設定</div>
+        <div class="form-group">
+          <label class="form-label">新しい管理者パスワード</label>
+          <input class="form-input" id="admin-new-pass" type="password" placeholder="新しいパスワード">
+        </div>
+        <button class="btn-primary" onclick="saveAdminPass()">パスワードを更新</button>
+      </div>
+      <div class="admin-section" style="margin-top:8px;">
+        <div class="admin-section-title">登録ユーザー一覧</div>
+        <div id="admin-user-list"><div class="loading">読み込み中…</div></div>
+      </div>
+      <div class="admin-section" style="margin-top:8px;">
+        <div class="admin-section-title">全予約一覧</div>
+        <div id="admin-booking-list"></div>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" id="nav-calendar" onclick="switchPage('calendar')">
+        <span class="nav-icon">□</span>
+        <span>カレンダー</span>
+      </button>
+      <button class="nav-item" id="nav-list" onclick="switchPage('list')">
+        <span class="nav-icon">≡</span>
+        <span>一覧</span>
+      </button>
+      <button class="nav-item" id="nav-admin" onclick="switchPage('admin')" style="display:none;">
+        <span class="nav-icon">⚙</span>
+        <span>管理</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-title">予約を追加</div>
+    <div class="form-group">
+      <label class="form-label">日付</label>
+      <input class="form-input" id="bk-date" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">時間</label>
+      <div class="time-row">
+        <input class="form-input" id="bk-start" type="time">
+        <div class="time-sep">—</div>
+        <input class="form-input" id="bk-end" type="time">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">会議名・目的</label>
+      <input class="form-input" id="bk-title" placeholder="例：週次MTG、採用面接">
+    </div>
+    <div class="form-group">
+      <label class="form-label">参加メンバー</label>
+      <textarea class="form-textarea" id="bk-members" placeholder="例：田中、鈴木、佐藤"></textarea>
+    </div>
+    <div id="bk-error" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeBookingModal()">キャンセル</button>
+      <button class="btn-primary" onclick="submitBooking()">予約する</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal">
+    <div class="detail-color-header" id="detail-color-bar"></div>
+    <div class="detail-time" id="detail-time"></div>
+    <div class="detail-title" id="detail-title"></div>
+    <div class="detail-section">
+      <div class="detail-section-label">予約者</div>
+      <div class="detail-owner-row">
+        <div class="detail-owner-dot" id="detail-owner-dot"></div>
+        <span id="detail-owner"></span>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-label">参加メンバー</div>
+      <div class="detail-members" id="detail-members"></div>
+    </div>
+    <div class="modal-actions" id="detail-actions">
+      <button class="btn-secondary" onclick="closeDetailModal()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentUser = null;   // { userId, userName, color }
+let isAdmin = false;
+let bookings = [];
+let currentYear, currentMonth;
+let selectedDate = null;
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('mrUser');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    showMainApp();
+  }
+
+  const today = new Date();
+  currentYear = today.getFullYear();
+  currentMonth = today.getMonth();
+});
+
+// ============================================================
+// AUTH
+// ============================================================
+function showLogin() {
+  document.getElementById('login-card').style.display = '';
+  document.getElementById('register-card').style.display = 'none';
+  document.getElementById('admin-login-card').style.display = 'none';
+  document.getElementById('login-error').textContent = '';
+}
+
+function showRegister() {
+  document.getElementById('login-card').style.display = 'none';
+  document.getElementById('register-card').style.display = '';
+  document.getElementById('admin-login-card').style.display = 'none';
+  document.getElementById('reg-error').textContent = '';
+}
+
+function showAdminLogin() {
+  document.getElementById('login-card').style.display = 'none';
+  document.getElementById('register-card').style.display = 'none';
+  document.getElementById('admin-login-card').style.display = '';
+  document.getElementById('admin-login-error').textContent = '';
+}
+
+async function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  const pin  = document.getElementById('login-pin').value.trim();
+  if (!name || !pin) { document.getElementById('login-error').textContent = '名前とPINを入力してください'; return; }
+
+  const res = await api({ action: 'loginUser', userName: name, pin });
+  if (res.ok) {
+    currentUser = { userId: res.userId, userName: res.userName, color: res.color };
+    localStorage.setItem('mrUser', JSON.stringify(currentUser));
+    showMainApp();
+  } else {
+    document.getElementById('login-error').textContent = res.error || 'エラーが発生しました';
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const pin  = document.getElementById('reg-pin').value.trim();
+  const pin2 = document.getElementById('reg-pin2').value.trim();
+  if (!name || !pin) { document.getElementById('reg-error').textContent = '名前とPINを入力してください'; return; }
+  if (pin.length < 4) { document.getElementById('reg-error').textContent = 'PINは4桁で入力してください'; return; }
+  if (pin !== pin2) { document.getElementById('reg-error').textContent = 'PINが一致しません'; return; }
+
+  const res = await api({ action: 'registerUser', userName: name, pin });
+  if (res.ok) {
+    currentUser = { userId: res.userId, userName: res.userName, color: res.color };
+    localStorage.setItem('mrUser', JSON.stringify(currentUser));
+    showMainApp();
+    showToast('登録完了しました');
+  } else {
+    document.getElementById('reg-error').textContent = res.error || 'エラーが発生しました';
+  }
+}
+
+async function doAdminLogin() {
+  const pass = document.getElementById('admin-login-pass').value;
+  const res = await api({ action: 'adminLogin', password: pass });
+  if (res.ok) {
+    isAdmin = true;
+    if (res.firstTime) {
+      showToast('初回ログイン：パスワードを設定してください');
+    }
+    // 管理者はゲストとして入る
+    currentUser = { userId: '__admin__', userName: '管理者', color: '#888' };
+    localStorage.setItem('mrUser', JSON.stringify(currentUser));
+    localStorage.setItem('mrAdmin', '1');
+    showMainApp();
+  } else {
+    document.getElementById('admin-login-error').textContent = res.error || 'パスワードが違います';
+  }
+}
+
+function logout() {
+  if (!confirm('ログアウトしますか？')) return;
+  currentUser = null;
+  isAdmin = false;
+  localStorage.removeItem('mrUser');
+  localStorage.removeItem('mrAdmin');
+  document.getElementById('auth-screen').style.display = '';
+  document.getElementById('main-app').style.display = 'none';
+  showLogin();
+}
+
+// ============================================================
+// MAIN APP
+// ============================================================
+function showMainApp() {
+  if (localStorage.getItem('mrAdmin') === '1') isAdmin = true;
+
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = '';
+
+  document.getElementById('user-name-header').textContent = currentUser.userName;
+  document.getElementById('user-dot-header').style.background = currentUser.color;
+
+  if (isAdmin) {
+    document.getElementById('nav-admin').style.display = '';
+  }
+
+  loadBookings();
+}
+
+async function loadBookings() {
+  const res = await api({ action: 'getBookings' });
+  if (res.ok) {
+    bookings = res.bookings;
+    renderCalendar();
+    renderList();
+    if (isAdmin) renderAdminBookings();
+    if (selectedDate) renderDayPanel(selectedDate);
+  }
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function renderCalendar() {
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('cal-month-label').textContent = `${currentYear}年 ${months[currentMonth]}`;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  const today = new Date();
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+  const cells = [];
+  for (let i = firstDay - 1; i >= 0; i--) {
+    cells.push({ day: daysInPrevMonth - i, cur: false });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    cells.push({ day: d, cur: true });
+  }
+  while (cells.length % 7 !== 0) {
+    cells.push({ day: cells.length - daysInMonth - firstDay + 1, cur: false });
+  }
+
+  cells.forEach((c, idx) => {
+    const year = c.cur ? currentYear : (currentMonth === 0 && !c.cur && idx < 7) ? currentYear - 1 : (currentMonth === 11 && !c.cur && idx >= 28) ? currentYear + 1 : currentYear;
+    const month = c.cur ? currentMonth : (idx < 7 && !c.cur) ? currentMonth - 1 : currentMonth + 1;
+    const dateStr = `${year}-${String(month < 0 ? 12 : month > 11 ? 1 : month + 1).padStart(2,'0')}-${String(c.day).padStart(2,'0')}`;
+
+    const dow = idx % 7;
+    const isToday = c.cur && c.day === today.getDate() && currentYear === today.getFullYear() && currentMonth === today.getMonth();
+    const isSelected = dateStr === selectedDate;
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' +
+      (c.cur ? '' : ' other-month') +
+      (isToday ? ' today' : '') +
+      (dow === 0 ? ' sunday' : '') +
+      (dow === 6 ? ' saturday' : '') +
+      (isSelected ? ' selected' : '');
+
+    const num = document.createElement('div');
+    num.className = 'cal-day-num';
+    num.textContent = c.day;
+    cell.appendChild(num);
+
+    // dots for bookings
+    const dayBookings = bookings.filter(b => b.date === dateStr);
+    if (dayBookings.length > 0) {
+      const dots = document.createElement('div');
+      dots.className = 'cal-dots';
+      const shown = dayBookings.slice(0, 4);
+      shown.forEach(b => {
+        const dot = document.createElement('div');
+        dot.className = 'cal-dot';
+        dot.style.background = b.color;
+        dots.appendChild(dot);
+      });
+      cell.appendChild(dots);
+    }
+
+    cell.addEventListener('click', () => selectDate(dateStr));
+    grid.appendChild(cell);
+  });
+}
+
+function selectDate(dateStr) {
+  selectedDate = dateStr;
+  renderCalendar();
+  renderDayPanel(dateStr);
+}
+
+function renderDayPanel(dateStr) {
+  const panel = document.getElementById('day-panel');
+  panel.style.display = '';
+
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const weekdays = ['日','月','火','水','木','金','土'];
+  const dow = new Date(y, m - 1, d).getDay();
+  document.getElementById('day-panel-title').textContent = `${m}月${d}日（${weekdays[dow]}）`;
+
+  const dayBookings = bookings.filter(b => b.date === dateStr)
+    .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+  const list = document.getElementById('day-booking-list');
+  list.innerHTML = '';
+
+  if (dayBookings.length === 0) {
+    list.innerHTML = '<div class="booking-empty">予約なし</div>';
+  } else {
+    dayBookings.forEach(b => list.appendChild(makeBookingItem(b)));
+  }
+}
+
+function makeBookingItem(b) {
+  const item = document.createElement('div');
+  item.className = 'booking-item';
+
+  const bar = document.createElement('div');
+  bar.className = 'booking-color-bar';
+  bar.style.background = b.color;
+
+  const body = document.createElement('div');
+  body.className = 'booking-body';
+  body.innerHTML = `
+    <div class="booking-time">${b.startTime} — ${b.endTime}</div>
+    <div class="booking-title">${escHtml(b.title)}</div>
+    <div class="booking-meta">
+      <div class="booking-owner">
+        <div class="booking-owner-dot" style="background:${b.color}"></div>
+        ${escHtml(b.userName)}
+      </div>
+      <div class="booking-members">${escHtml(b.members)}</div>
+    </div>
+  `;
+  body.addEventListener('click', () => openDetailModal(b));
+
+  item.appendChild(bar);
+  item.appendChild(body);
+
+  const canDelete = isAdmin || (currentUser && currentUser.userId === b.userId);
+  if (canDelete) {
+    const del = document.createElement('button');
+    del.className = 'booking-delete-btn';
+    del.textContent = '×';
+    del.addEventListener('click', (e) => { e.stopPropagation(); deleteBooking(b.id); });
+    item.appendChild(del);
+  }
+
+  return item;
+}
+
+function changeMonth(dir) {
+  currentMonth += dir;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  selectedDate = null;
+  document.getElementById('day-panel').style.display = 'none';
+  renderCalendar();
+}
+
+// ============================================================
+// LIST VIEW
+// ============================================================
+function renderList() {
+  const section = document.getElementById('list-section');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const future = bookings
+    .filter(b => new Date(b.date + 'T00:00:00') >= today)
+    .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+
+  if (future.length === 0) {
+    section.innerHTML = '<div class="booking-empty" style="padding:48px 0;">予約はありません</div>';
+    return;
+  }
+
+  const groups = {};
+  future.forEach(b => {
+    if (!groups[b.date]) groups[b.date] = [];
+    groups[b.date].push(b);
+  });
+
+  section.innerHTML = '';
+  Object.keys(groups).sort().forEach(date => {
+    const [y, m, d] = date.split('-').map(Number);
+    const weekdays = ['日','月','火','水','木','金','土'];
+    const dow = new Date(y, m - 1, d).getDay();
+    const label = `${m}月${d}日（${weekdays[dow]}）`;
+
+    const group = document.createElement('div');
+    group.className = 'list-date-group';
+    group.innerHTML = `<div class="list-date-label">${label}</div>`;
+
+    groups[date].forEach(b => {
+      const item = document.createElement('div');
+      item.className = 'list-booking-item';
+      item.innerHTML = `
+        <div class="list-color-bar" style="background:${b.color}"></div>
+        <div class="list-body">
+          <div class="list-time">${b.startTime} — ${b.endTime}</div>
+          <div class="list-title">${escHtml(b.title)}</div>
+          <div class="list-owner">
+            <div class="list-owner-dot" style="background:${b.color}"></div>
+            ${escHtml(b.userName)} ／ ${escHtml(b.members)}
+          </div>
+        </div>
+      `;
+      item.addEventListener('click', () => openDetailModal(b));
+      group.appendChild(item);
+    });
+
+    section.appendChild(group);
+  });
+}
+
+// ============================================================
+// DETAIL MODAL
+// ============================================================
+function openDetailModal(b) {
+  document.getElementById('detail-color-bar').style.background = b.color;
+  document.getElementById('detail-time').textContent = `${b.date}  ${b.startTime} — ${b.endTime}`;
+  document.getElementById('detail-title').textContent = b.title;
+  document.getElementById('detail-owner-dot').style.background = b.color;
+  document.getElementById('detail-owner').textContent = b.userName;
+  document.getElementById('detail-members').textContent = b.members;
+
+  const actions = document.getElementById('detail-actions');
+  actions.innerHTML = '<button class="btn-secondary" onclick="closeDetailModal()">閉じる</button>';
+
+  const canDelete = isAdmin || (currentUser && currentUser.userId === b.userId);
+  if (canDelete) {
+    const btn = document.createElement('button');
+    btn.className = 'btn-danger';
+    btn.textContent = '削除';
+    btn.onclick = () => { closeDetailModal(); deleteBooking(b.id); };
+    actions.appendChild(btn);
+  }
+
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeDetailModal() {
+  document.getElementById('detail-modal').classList.remove('open');
+}
+
+// ============================================================
+// BOOKING MODAL
+// ============================================================
+function openBookingModal() {
+  if (!currentUser || currentUser.userId === '__admin__') {
+    showToast('ユーザーとしてログインしてください', true); return;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('bk-date').value = selectedDate || today;
+  document.getElementById('bk-start').value = '09:00';
+  document.getElementById('bk-end').value = '10:00';
+  document.getElementById('bk-title').value = '';
+  document.getElementById('bk-members').value = '';
+  document.getElementById('bk-error').textContent = '';
+  document.getElementById('booking-modal').classList.add('open');
+}
+
+function closeBookingModal() {
+  document.getElementById('booking-modal').classList.remove('open');
+}
+
+async function submitBooking() {
+  const date  = document.getElementById('bk-date').value;
+  const start = document.getElementById('bk-start').value;
+  const end   = document.getElementById('bk-end').value;
+  const title = document.getElementById('bk-title').value.trim();
+  const members = document.getElementById('bk-members').value.trim();
+
+  if (!date || !start || !end || !title) {
+    document.getElementById('bk-error').textContent = '日付・時間・会議名は必須です'; return;
+  }
+  if (start >= end) {
+    document.getElementById('bk-error').textContent = '終了時間は開始時間より後にしてください'; return;
+  }
+
+  // 重複チェック
+  const conflict = bookings.find(b =>
+    b.date === date &&
+    !(end <= b.startTime || start >= b.endTime)
+  );
+  if (conflict) {
+    document.getElementById('bk-error').textContent = `その時間帯はすでに「${conflict.title}」が予約されています`; return;
+  }
+
+  const res = await api({
+    action: 'addBooking',
+    date, startTime: start, endTime: end,
+    title, members,
+    userName: currentUser.userName,
+    userId: currentUser.userId,
+    color: currentUser.color
+  });
+
+  if (res.ok) {
+    closeBookingModal();
+    showToast('予約しました');
+    await loadBookings();
+    selectDate(date);
+  } else {
+    document.getElementById('bk-error').textContent = res.error || 'エラーが発生しました';
+  }
+}
+
+async function deleteBooking(id) {
+  if (!confirm('この予約を削除しますか？')) return;
+  const res = await api({
+    action: 'deleteBooking',
+    bookingId: id,
+    userId: currentUser.userId,
+    isAdmin
+  });
+  if (res.ok) {
+    showToast('削除しました');
+    await loadBookings();
+    if (selectedDate) renderDayPanel(selectedDate);
+  } else {
+    showToast(res.error || 'エラーが発生しました', true);
+  }
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+async function saveAdminPass() {
+  const pass = document.getElementById('admin-new-pass').value;
+  if (!pass) { showToast('パスワードを入力してください', true); return; }
+  const res = await api({ action: 'adminSetPass', password: pass });
+  if (res.ok) { showToast('パスワードを更新しました'); document.getElementById('admin-new-pass').value = ''; }
+}
+
+async function renderAdminUsers() {
+  const res = await api({ action: 'getUsers' });
+  const list = document.getElementById('admin-user-list');
+  if (!res.ok) { list.innerHTML = '<div class="error-msg">読み込みエラー</div>'; return; }
+  if (res.users.length === 0) { list.innerHTML = '<div class="booking-empty">ユーザーなし</div>'; return; }
+
+  list.innerHTML = '';
+  res.users.forEach(u => {
+    const row = document.createElement('div');
+    row.className = 'admin-user-row';
+    row.innerHTML = `
+      <div class="admin-user-name">
+        <div class="admin-user-dot" style="background:${u.color}"></div>
+        ${escHtml(u.userName)}
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function renderAdminBookings() {
+  const list = document.getElementById('admin-booking-list');
+  const sorted = [...bookings].sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+  list.innerHTML = '';
+  sorted.forEach(b => list.appendChild(makeBookingItem(b)));
+}
+
+// ============================================================
+// PAGE NAV
+// ============================================================
+function switchPage(name) {
+  ['calendar','list','admin'].forEach(p => {
+    document.getElementById(`page-${p}`).classList.toggle('active', p === name);
+    const nav = document.getElementById(`nav-${p}`);
+    if (nav) nav.classList.toggle('active', p === name);
+  });
+
+  if (name === 'admin') renderAdminUsers();
+  if (name === 'list') renderList();
+}
+
+// ============================================================
+// API
+// ============================================================
+async function api(data) {
+  if (!GAS_URL || GAS_URL.includes('ここに')) {
+    return { ok: false, error: 'GAS_URL が設定されていません。HTMLファイルの GAS_URL を更新してください。' };
+  }
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  } catch (err) {
+    return { ok: false, error: 'サーバーに接続できません: ' + err.message };
+  }
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// Close modals on overlay click
+document.getElementById('booking-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeBookingModal();
+});
+document.getElementById('detail-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDetailModal();
+});
+</script>
+</body>
+</html>
