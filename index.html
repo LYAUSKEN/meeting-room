@@ -778,7 +778,11 @@ function openBookingModal() {
 function closeBookingModal() { document.getElementById('booking-modal').classList.remove('open'); }
 
 async function submitBooking() {
-  const editId = document.getElementById('bk-edit-id').value;
+const btn = document.querySelector('#booking-modal .btn-primary');
+if (btn.disabled) return;
+btn.disabled = true;
+setTimeout(() => { btn.disabled = false; }, 3000);
+ const editId = document.getElementById('bk-edit-id').value;
   const date  = document.getElementById('bk-date').value;
   const start = document.getElementById('bk-start').value;
   const end   = document.getElementById('bk-end').value;
