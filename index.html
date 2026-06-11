@@ -31,151 +31,74 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* SPLASH */
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 12px;
+  transition: opacity 0.6s ease;
+}
+#splash-screen.fade-out { opacity: 0; pointer-events: none; }
+
+.splash-title {
+  font-family: var(--sans);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--text);
+}
+.splash-sub {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.25em;
+}
+
 #app { max-width: 480px; margin: 0 auto; padding: 0 0 80px; }
 .page { display: none; }
 .page.active { display: block; }
 
 /* HEADER */
 .app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 16px 16px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 16px 16px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); z-index: 10;
 }
-.app-title {
-  font-family: var(--sans);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: var(--text);
-}
+.app-title { font-family: var(--sans); font-size: 18px; font-weight: 700; letter-spacing: 0.15em; color: var(--text); }
 .header-actions { display: flex; gap: 8px; align-items: center; }
-.user-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border: 1px solid var(--border2);
-  border-radius: 2px;
-  font-size: 12px;
-  color: var(--muted);
-  cursor: pointer;
-}
+.user-badge { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border2); border-radius: 2px; font-size: 12px; color: var(--muted); cursor: pointer; }
 .user-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
 /* MEMBER BAR */
-.member-bar {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-.member-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 5px 2px;
-  border-radius: 3px;
-}
+.member-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.member-slot { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 2px; border-radius: 3px; }
 .member-slot-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-.member-slot-name {
-  font-size: 9px;
-  color: var(--muted);
-  text-align: center;
-  line-height: 1.2;
-  min-height: 11px;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
+.member-slot-name { font-size: 9px; color: var(--muted); text-align: center; line-height: 1.2; min-height: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
 .member-slot.occupied .member-slot-name { color: var(--text); }
 
 /* CALENDAR NAV */
-.cal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 10px;
-}
-.cal-month {
-  font-family: var(--sans);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-.cal-nav-btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  width: 32px; height: 32px;
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 2px;
-  transition: all 0.15s;
-}
+.cal-nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; }
+.cal-month { font-family: var(--sans); font-size: 20px; font-weight: 700; letter-spacing: 0.05em; }
+.cal-nav-btn { background: none; border: 1px solid var(--border); color: var(--muted); width: 32px; height: 32px; cursor: pointer; font-size: 14px; border-radius: 2px; transition: all 0.15s; }
 .cal-nav-btn:hover { border-color: var(--text); color: var(--text); }
 
 /* CALENDAR GRID */
-.cal-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  padding: 0 8px;
-  margin-bottom: 4px;
-}
-.cal-weekday {
-  text-align: center;
-  font-size: 9px;
-  font-family: var(--sans);
-  color: var(--faint);
-  letter-spacing: 0.05em;
-  padding: 4px 0;
-}
+.cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); padding: 0 8px; margin-bottom: 4px; }
+.cal-weekday { text-align: center; font-size: 9px; font-family: var(--sans); color: var(--faint); letter-spacing: 0.05em; padding: 4px 0; }
 .cal-weekday:first-child { color: #8B2222; }
 .cal-weekday:last-child  { color: #1A4A8B; }
-
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  padding: 0 8px;
-}
-.cal-cell {
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 4px 2px 2px;
-  cursor: pointer;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  transition: background 0.1s, border-color 0.1s;
-  position: relative;
-  min-height: 44px;
-}
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 8px; }
+.cal-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 4px 2px 2px; cursor: pointer; border-radius: 2px; border: 1px solid transparent; transition: background 0.1s, border-color 0.1s; position: relative; min-height: 44px; }
 .cal-cell:hover { background: var(--card); border-color: var(--border); }
 .cal-cell.today .cal-day-num { color: var(--text); font-weight: 700; }
-.cal-cell.today::after {
-  content: '';
-  position: absolute;
-  bottom: 3px; left: 50%;
-  transform: translateX(-50%);
-  width: 4px; height: 4px;
-  background: var(--text);
-  border-radius: 50%;
-}
+.cal-cell.today::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--text); border-radius: 50%; }
 .cal-cell.other-month .cal-day-num { color: var(--faint); }
-.cal-cell.sunday  .cal-day-num { color: #8B2222; }
+.cal-cell.sunday .cal-day-num { color: #8B2222; }
 .cal-cell.saturday .cal-day-num { color: #1A4A8B; }
 .cal-cell.selected { background: var(--card); border-color: var(--border2); }
 .cal-day-num { font-family: var(--sans); font-size: 13px; font-weight: 400; line-height: 1; margin-bottom: 3px; }
@@ -183,151 +106,46 @@ html, body {
 .cal-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 
 /* DAY PANEL */
-.day-panel {
-  margin: 12px 16px 0;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.day-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
+.day-panel { margin: 12px 16px 0; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+.day-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface); }
 .day-panel-title { font-family: var(--sans); font-size: 14px; font-weight: 500; }
-.add-btn {
-  background: var(--text);
-  color: var(--bg);
-  border: none;
-  padding: 5px 14px;
-  font-family: var(--sans);
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 1px;
-  letter-spacing: 0.05em;
-  transition: opacity 0.15s;
-}
+.add-btn { background: var(--text); color: var(--bg); border: none; padding: 5px 14px; font-family: var(--sans); font-size: 12px; cursor: pointer; border-radius: 1px; letter-spacing: 0.05em; transition: opacity 0.15s; }
 .add-btn:hover { opacity: 0.85; }
-
 .booking-list { padding: 0; }
 .booking-empty { padding: 24px; text-align: center; color: var(--faint); font-size: 12px; letter-spacing: 0.1em; }
-
-.booking-item {
-  display: flex;
-  align-items: stretch;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.1s;
-}
+.booking-item { display: flex; align-items: stretch; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
 .booking-item:last-child { border-bottom: none; }
 .booking-item:hover { background: var(--surface); }
 .booking-color-bar { width: 4px; flex-shrink: 0; }
 .booking-body { flex: 1; padding: 10px 12px; }
-
-/* ① 時間大きく、レイアウト変更 */
-.booking-time {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 0.03em;
-  margin-bottom: 2px;
-}
-.booking-job {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 2px;
-}
-.booking-owner-line {
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 2px;
-}
+.booking-time { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: 0.03em; margin-bottom: 2px; }
+.booking-job { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+.booking-owner-line { font-size: 11px; display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
 .booking-owner-dot { width: 7px; height: 7px; border-radius: 50%; }
 .booking-members-line { font-size: 11px; color: var(--muted); }
-
-.booking-delete-btn {
-  background: none;
-  border: none;
-  color: var(--faint);
-  padding: 0 12px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: color 0.15s;
-  flex-shrink: 0;
-  align-self: center;
-}
+.booking-delete-btn { background: none; border: none; color: var(--faint); padding: 0 12px; cursor: pointer; font-size: 16px; transition: color 0.15s; flex-shrink: 0; align-self: center; }
 .booking-delete-btn:hover { color: #E74C3C; }
 
 /* MODAL */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  z-index: 100;
-  align-items: flex-end;
-  justify-content: center;
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: flex-end; justify-content: center; }
 .modal-overlay.open { display: flex; }
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-  width: 100%;
-  max-width: 480px;
-  padding: 24px 20px 32px;
-  max-height: 90dvh;
-  overflow-y: auto;
-}
+.modal { background: var(--surface); border: 1px solid var(--border2); border-bottom: none; border-radius: 4px 4px 0 0; width: 100%; max-width: 480px; padding: 24px 20px 32px; max-height: 90dvh; overflow-y: auto; }
 .modal-title { font-family: var(--sans); font-size: 16px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 20px; }
 .form-group { margin-bottom: 16px; }
 .form-label { display: block; font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
-.form-input, .form-select, .form-textarea {
-  width: 100%;
-  background: var(--card);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  padding: 10px 12px;
-  font-family: var(--sans);
-  font-size: 14px;
-  border-radius: 2px;
-  outline: none;
-  transition: border-color 0.15s;
-  -webkit-appearance: none;
-}
+.form-input, .form-select, .form-textarea { width: 100%; background: var(--card); border: 1px solid var(--border2); color: var(--text); padding: 10px 12px; font-family: var(--sans); font-size: 14px; border-radius: 2px; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--text); }
 .form-textarea { resize: vertical; min-height: 60px; }
 .time-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
 .time-sep { text-align: center; color: var(--muted); font-size: 18px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-
-.btn-primary {
-  flex: 1; background: var(--text); color: var(--bg); border: none; padding: 12px;
-  font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer;
-  border-radius: 2px; letter-spacing: 0.05em; transition: opacity 0.15s;
-}
+.btn-primary { flex: 1; background: var(--text); color: var(--bg); border: none; padding: 12px; font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 2px; letter-spacing: 0.05em; transition: opacity 0.15s; }
 .btn-primary:hover { opacity: 0.85; }
-.btn-secondary {
-  flex: 1; background: none; color: var(--muted); border: 1px solid var(--border2); padding: 12px;
-  font-family: var(--sans); font-size: 14px; cursor: pointer; border-radius: 2px;
-  letter-spacing: 0.05em; transition: all 0.15s;
-}
+.btn-secondary { flex: 1; background: none; color: var(--muted); border: 1px solid var(--border2); padding: 12px; font-family: var(--sans); font-size: 14px; cursor: pointer; border-radius: 2px; letter-spacing: 0.05em; transition: all 0.15s; }
 .btn-secondary:hover { border-color: var(--text); color: var(--text); }
-.btn-danger {
-  background: #8B1A1A; color: #FFD0D0; border: none; padding: 12px;
-  font-family: var(--sans); font-size: 14px; cursor: pointer; border-radius: 2px; transition: opacity 0.15s;
-}
+.btn-danger { background: #8B1A1A; color: #FFD0D0; border: none; padding: 12px; font-family: var(--sans); font-size: 14px; cursor: pointer; border-radius: 2px; transition: opacity 0.15s; }
 .btn-danger:hover { opacity: 0.85; }
-.btn-edit {
-  background: #1A3A5C; color: #D0E8FF; border: none; padding: 12px;
-  font-family: var(--sans); font-size: 14px; cursor: pointer; border-radius: 2px; transition: opacity 0.15s;
-}
+.btn-edit { background: #1A3A5C; color: #D0E8FF; border: none; padding: 12px; font-family: var(--sans); font-size: 14px; cursor: pointer; border-radius: 2px; transition: opacity 0.15s; }
 .btn-edit:hover { opacity: 0.85; }
 
 /* DETAIL MODAL */
@@ -341,20 +159,12 @@ html, body {
 .detail-members { font-size: 14px; line-height: 1.7; color: var(--text); }
 
 /* TOAST */
-.toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  background: var(--text); color: var(--bg); padding: 10px 20px;
-  border-radius: 2px; font-size: 13px; letter-spacing: 0.05em; z-index: 200;
-  opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap;
-}
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 2px; font-size: 13px; letter-spacing: 0.05em; z-index: 200; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
 .toast.show { opacity: 1; }
 .toast.error { background: #8B1A1A; color: #FFD0D0; }
 
 /* AUTH */
-.auth-screen {
-  min-height: 100dvh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; padding: 32px 24px;
-}
+.auth-screen { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
 .auth-logo { font-family: var(--sans); font-size: 28px; font-weight: 700; letter-spacing: 0.2em; margin-bottom: 8px; text-align: center; }
 .auth-subtitle { font-size: 11px; color: var(--muted); letter-spacing: 0.2em; margin-bottom: 40px; }
 .auth-card { width: 100%; max-width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 28px 24px; }
@@ -364,17 +174,8 @@ html, body {
 .pin-input { letter-spacing: 0.5em; text-align: center; font-size: 20px; }
 
 /* BOTTOM NAV */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 480px; background: var(--surface);
-  border-top: 1px solid var(--border); display: flex; z-index: 10;
-}
-.nav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; padding: 10px 0; cursor: pointer; color: var(--faint);
-  font-size: 10px; letter-spacing: 0.08em; transition: color 0.15s;
-  border: none; background: none; gap: 4px;
-}
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 10; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; cursor: pointer; color: var(--faint); font-size: 10px; letter-spacing: 0.08em; transition: color 0.15s; border: none; background: none; gap: 4px; }
 .nav-item.active { color: var(--text); }
 .nav-item:hover { color: var(--muted); }
 .nav-icon { font-size: 18px; line-height: 1; }
@@ -383,10 +184,7 @@ html, body {
 .list-section { padding: 0 16px; margin-top: 12px; }
 .list-date-group { margin-bottom: 16px; }
 .list-date-label { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; padding: 8px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
-.list-booking-item {
-  display: flex; align-items: stretch; border: 1px solid var(--border);
-  border-radius: 2px; margin-bottom: 6px; cursor: pointer; transition: background 0.1s; overflow: hidden;
-}
+.list-booking-item { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: 2px; margin-bottom: 6px; cursor: pointer; transition: background 0.1s; overflow: hidden; }
 .list-booking-item:hover { background: var(--card); }
 .list-color-bar { width: 4px; flex-shrink: 0; }
 .list-body { flex: 1; padding: 10px 12px; }
@@ -416,25 +214,23 @@ const USER_COLORS = [
 ];
 </script>
 
+<!-- SPLASH -->
+<div id="splash-screen">
+  <div class="splash-title" id="splash-title">TIMESPACE</div>
+  <div class="splash-sub">RESERVATION SYSTEM</div>
+</div>
+
 <!-- AUTH -->
-<div id="auth-screen" class="auth-screen">
+<div id="auth-screen" class="auth-screen" style="display:none;">
   <div class="auth-logo">TIMESPACE</div>
-  <div class="auth-subtitle" id="auth-subtitle-label">MEETING ROOM RESERVATION</div>
+  <div class="auth-subtitle">RESERVATION SYSTEM</div>
 
   <div class="auth-card" id="login-card">
     <div class="auth-card-title">ログイン</div>
-    <div class="form-group">
-      <label class="form-label">名前</label>
-      <input class="form-input" id="login-name" placeholder="あなたの名前">
-    </div>
-    <div class="form-group">
-      <label class="form-label">PIN（4桁）</label>
-      <input class="form-input pin-input" id="login-pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
-    </div>
+    <div class="form-group"><label class="form-label">名前</label><input class="form-input" id="login-name" placeholder="あなたの名前"></div>
+    <div class="form-group"><label class="form-label">PIN（4桁）</label><input class="form-input pin-input" id="login-pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••"></div>
     <div id="login-error" class="error-msg"></div>
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="doLogin()">ログイン</button>
-    </div>
+    <div class="modal-actions"><button class="btn-primary" onclick="doLogin()">ログイン</button></div>
     <div class="auth-switch">はじめて利用する方は <span onclick="showRegister()">新規登録</span></div>
     <div class="auth-switch" style="margin-top:8px;">管理者の方は <span onclick="showAdminLogin()">管理者ログイン</span></div>
   </div>
@@ -468,7 +264,7 @@ const USER_COLORS = [
     <header class="app-header">
       <div class="app-title" id="app-title-label">TIMESPACE</div>
       <div class="header-actions">
-        <div class="user-badge" onclick="logout()" id="user-badge">
+        <div class="user-badge" onclick="logout()">
           <div class="user-dot" id="user-dot-header"></div>
           <span id="user-name-header"></span>
         </div>
@@ -477,7 +273,6 @@ const USER_COLORS = [
 
     <div class="member-bar" id="member-bar"></div>
 
-    <!-- Calendar Page -->
     <div id="page-calendar" class="page active">
       <div class="cal-nav">
         <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
@@ -485,13 +280,8 @@ const USER_COLORS = [
         <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
       </div>
       <div class="cal-weekdays">
-        <div class="cal-weekday">SUN</div>
-        <div class="cal-weekday">MON</div>
-        <div class="cal-weekday">TUE</div>
-        <div class="cal-weekday">WED</div>
-        <div class="cal-weekday">THU</div>
-        <div class="cal-weekday">FRI</div>
-        <div class="cal-weekday">SAT</div>
+        <div class="cal-weekday">SUN</div><div class="cal-weekday">MON</div><div class="cal-weekday">TUE</div>
+        <div class="cal-weekday">WED</div><div class="cal-weekday">THU</div><div class="cal-weekday">FRI</div><div class="cal-weekday">SAT</div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="day-panel" id="day-panel" style="display:none;">
@@ -503,21 +293,19 @@ const USER_COLORS = [
       </div>
     </div>
 
-    <!-- List Page -->
     <div id="page-list" class="page">
       <div class="list-section" id="list-section"><div class="loading">読み込み中…</div></div>
     </div>
 
-    <!-- Admin Page -->
     <div id="page-admin" class="page">
       <div class="admin-section">
         <div class="admin-section-title">アプリ設定</div>
         <div class="form-group">
-          <label class="form-label">⑤ アプリ名を変更</label>
+          <label class="form-label">アプリ名を変更</label>
           <input class="form-input" id="admin-app-name" placeholder="例：会議室予約、TIMESPACE">
         </div>
         <button class="btn-primary" onclick="saveAppName()" style="margin-bottom:12px;">アプリ名を保存</button>
-        <div class="form-group" style="margin-top:8px;">
+        <div class="form-group" style="margin-top:16px;">
           <label class="form-label">新しい管理者パスワード</label>
           <input class="form-input" id="admin-new-pass" type="password" placeholder="新しいパスワード">
         </div>
@@ -534,15 +322,9 @@ const USER_COLORS = [
     </div>
 
     <nav class="bottom-nav">
-      <button class="nav-item active" id="nav-calendar" onclick="switchPage('calendar')">
-        <span class="nav-icon">□</span><span>カレンダー</span>
-      </button>
-      <button class="nav-item" id="nav-list" onclick="switchPage('list')">
-        <span class="nav-icon">≡</span><span>一覧</span>
-      </button>
-      <button class="nav-item" id="nav-admin" onclick="switchPage('admin')" style="display:none;">
-        <span class="nav-icon">⚙</span><span>管理</span>
-      </button>
+      <button class="nav-item active" id="nav-calendar" onclick="switchPage('calendar')"><span class="nav-icon">□</span><span>カレンダー</span></button>
+      <button class="nav-item" id="nav-list" onclick="switchPage('list')"><span class="nav-icon">≡</span><span>一覧</span></button>
+      <button class="nav-item" id="nav-admin" onclick="switchPage('admin')" style="display:none;"><span class="nav-icon">⚙</span><span>管理</span></button>
     </nav>
   </div>
 </div>
@@ -555,11 +337,7 @@ const USER_COLORS = [
     <div class="form-group"><label class="form-label">日付</label><input class="form-input" id="bk-date" type="date"></div>
     <div class="form-group">
       <label class="form-label">時間</label>
-      <div class="time-row">
-        <input class="form-input" id="bk-start" type="time">
-        <div class="time-sep">—</div>
-        <input class="form-input" id="bk-end" type="time">
-      </div>
+      <div class="time-row"><input class="form-input" id="bk-start" type="time"><div class="time-sep">—</div><input class="form-input" id="bk-end" type="time"></div>
     </div>
     <div class="form-group"><label class="form-label">JOB</label><input class="form-input" id="bk-title" placeholder="例：週次MTG、採用面接"></div>
     <div class="form-group"><label class="form-label">メンバー</label><textarea class="form-textarea" id="bk-members" placeholder="例：田中、鈴木、佐藤"></textarea></div>
@@ -579,68 +357,92 @@ const USER_COLORS = [
     <div class="detail-title" id="detail-title"></div>
     <div class="detail-section">
       <div class="detail-section-label">予約者</div>
-      <div class="detail-owner-row">
-        <div class="detail-owner-dot" id="detail-owner-dot"></div>
-        <span id="detail-owner"></span>
-      </div>
+      <div class="detail-owner-row"><div class="detail-owner-dot" id="detail-owner-dot"></div><span id="detail-owner"></span></div>
     </div>
-    <div class="detail-section">
-      <div class="detail-section-label">参加メンバー</div>
-      <div class="detail-members" id="detail-members"></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-label">予約日時</div>
-      <div class="detail-members" id="detail-createdat"></div>
-    </div>
-    <div class="modal-actions" id="detail-actions">
-      <button class="btn-secondary" onclick="closeDetailModal()">閉じる</button>
-    </div>
+    <div class="detail-section"><div class="detail-section-label">参加メンバー</div><div class="detail-members" id="detail-members"></div></div>
+    <div class="detail-section"><div class="detail-section-label">予約日時</div><div class="detail-members" id="detail-createdat"></div></div>
+    <div class="modal-actions" id="detail-actions"><button class="btn-secondary" onclick="closeDetailModal()">閉じる</button></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// STATE
 let currentUser = null;
 let isAdmin = false;
 let bookings = [];
 let allUsers = [];
 let currentYear, currentMonth;
 let selectedDate = null;
-let appName = localStorage.getItem('tsAppName') || 'TIMESPACE';
+let appName = 'TIMESPACE';
 
-// INIT
+// SPLASH
 window.addEventListener('DOMContentLoaded', () => {
-  applyAppName();
-  const saved = localStorage.getItem('mrUser');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    showMainApp();
-  }
+  // スプラッシュ画面を3秒表示してからフェードアウト
+  const splash = document.getElementById('splash-screen');
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      initApp();
+    }, 600);
+  }, 3000);
+
   const today = new Date();
   currentYear = today.getFullYear();
   currentMonth = today.getMonth();
 });
 
-// ⑦ アプリ名
+function initApp() {
+  // GASからアプリ名を取得
+  loadAppName();
+
+  const saved = localStorage.getItem('mrUser');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    showMainApp();
+  } else {
+    document.getElementById('auth-screen').style.display = '';
+  }
+}
+
+// アプリ名をGASから取得
+async function loadAppName() {
+  const res = await api({ action: 'getSetting', key: 'appName' });
+  if (res.ok && res.value) {
+    appName = res.value;
+  } else {
+    appName = localStorage.getItem('tsAppName') || 'TIMESPACE';
+  }
+  applyAppName();
+}
+
 function applyAppName() {
-  appName = localStorage.getItem('tsAppName') || 'TIMESPACE';
   document.title = appName;
   const t = document.getElementById('app-title-label');
   if (t) t.textContent = appName;
-  const al = document.getElementById('auth-subtitle-label');
-  // auth logoは固定でTIMESPACEのまま
+  const s = document.getElementById('splash-title');
+  if (s) s.textContent = appName;
 }
 
-function saveAppName() {
+async function saveAppName() {
   const val = document.getElementById('admin-app-name').value.trim();
   if (!val) { showToast('名前を入力してください', true); return; }
-  localStorage.setItem('tsAppName', val);
-  appName = val;
-  applyAppName();
-  showToast('アプリ名を変更しました');
-  document.getElementById('admin-app-name').value = '';
+  const res = await api({ action: 'saveSetting', key: 'appName', value: val });
+  if (res.ok) {
+    appName = val;
+    localStorage.setItem('tsAppName', val);
+    applyAppName();
+    showToast('アプリ名を変更しました');
+    document.getElementById('admin-app-name').value = '';
+  } else {
+    // GAS未対応の場合はローカルに保存
+    appName = val;
+    localStorage.setItem('tsAppName', val);
+    applyAppName();
+    showToast('アプリ名を変更しました（ローカル保存）');
+    document.getElementById('admin-app-name').value = '';
+  }
 }
 
 // AUTH
@@ -717,7 +519,6 @@ function logout() {
   showLogin();
 }
 
-// MAIN APP
 function showMainApp() {
   if (localStorage.getItem('mrAdmin') === '1') isAdmin = true;
   document.getElementById('auth-screen').style.display = 'none';
@@ -737,8 +538,7 @@ async function loadAll() {
   if (usersRes.ok) { allUsers = usersRes.users || []; renderMemberBar(); }
   if (bookingsRes.ok) {
     bookings = normalizeBookings(bookingsRes.bookings || []);
-    renderCalendar();
-    renderList();
+    renderCalendar(); renderList();
     if (isAdmin) renderAdminBookings();
     if (selectedDate) renderDayPanel(selectedDate);
   }
@@ -748,8 +548,7 @@ async function loadBookings() {
   const res = await api({ action: 'getBookings' });
   if (res.ok) {
     bookings = normalizeBookings(res.bookings || []);
-    renderCalendar();
-    renderList();
+    renderCalendar(); renderList();
     if (isAdmin) renderAdminBookings();
     if (selectedDate) renderDayPanel(selectedDate);
   }
@@ -758,16 +557,12 @@ async function loadBookings() {
 function normalizeBookings(arr) {
   return arr.map(b => {
     let d = b.date;
-    if (d instanceof Date) {
-      d = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    } else if (typeof d === 'string' && d.length > 10) {
-      d = d.slice(0, 10);
-    }
+    if (d instanceof Date) d = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    else if (typeof d === 'string' && d.length > 10) d = d.slice(0, 10);
     return { ...b, date: d };
   });
 }
 
-// MEMBER BAR
 function renderMemberBar() {
   const bar = document.getElementById('member-bar');
   bar.innerHTML = '';
@@ -781,24 +576,18 @@ function renderMemberBar() {
     const name = document.createElement('div');
     name.className = 'member-slot-name';
     name.textContent = user ? user.userName : '';
-    slot.appendChild(dot);
-    slot.appendChild(name);
-    bar.appendChild(slot);
+    slot.appendChild(dot); slot.appendChild(name); bar.appendChild(slot);
   }
 }
 
-// CALENDAR
 function renderCalendar() {
-  // ④ 2026_6 形式
   document.getElementById('cal-month-label').textContent = `${currentYear}_${currentMonth + 1}`;
-
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
   const today = new Date();
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
-
   const cells = [];
   for (let i = firstDay - 1; i >= 0; i--) cells.push({ day: daysInPrevMonth - i, cur: false });
   for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, cur: true });
@@ -810,26 +599,17 @@ function renderCalendar() {
     const dateStr = `${year}-${String(month < 0 ? 12 : month > 11 ? 1 : month + 1).padStart(2,'0')}-${String(c.day).padStart(2,'0')}`;
     const dow = idx % 7;
     const isToday = c.cur && c.day === today.getDate() && currentYear === today.getFullYear() && currentMonth === today.getMonth();
-    const isSelected = dateStr === selectedDate;
-
     const cell = document.createElement('div');
-    cell.className = 'cal-cell' + (c.cur ? '' : ' other-month') + (isToday ? ' today' : '') + (dow === 0 ? ' sunday' : '') + (dow === 6 ? ' saturday' : '') + (isSelected ? ' selected' : '');
-
+    cell.className = 'cal-cell' + (c.cur ? '' : ' other-month') + (isToday ? ' today' : '') + (dow === 0 ? ' sunday' : '') + (dow === 6 ? ' saturday' : '') + (dateStr === selectedDate ? ' selected' : '');
     const num = document.createElement('div');
     num.className = 'cal-day-num';
     num.textContent = c.day;
     cell.appendChild(num);
-
     const dayBookings = bookings.filter(b => b.date === dateStr);
     if (dayBookings.length > 0) {
       const dots = document.createElement('div');
       dots.className = 'cal-dots';
-      dayBookings.slice(0, 4).forEach(b => {
-        const dot = document.createElement('div');
-        dot.className = 'cal-dot';
-        dot.style.background = b.color;
-        dots.appendChild(dot);
-      });
+      dayBookings.slice(0, 4).forEach(b => { const dot = document.createElement('div'); dot.className = 'cal-dot'; dot.style.background = b.color; dots.appendChild(dot); });
       cell.appendChild(dots);
     }
     cell.addEventListener('click', () => selectDate(dateStr));
@@ -837,11 +617,7 @@ function renderCalendar() {
   });
 }
 
-function selectDate(dateStr) {
-  selectedDate = dateStr;
-  renderCalendar();
-  renderDayPanel(dateStr);
-}
+function selectDate(dateStr) { selectedDate = dateStr; renderCalendar(); renderDayPanel(dateStr); }
 
 function renderDayPanel(dateStr) {
   document.getElementById('day-panel').style.display = '';
@@ -849,45 +625,30 @@ function renderDayPanel(dateStr) {
   const weekdays = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const dow = new Date(y, m - 1, d).getDay();
   document.getElementById('day-panel-title').textContent = `${m}/${d} ${weekdays[dow]}`;
-
   const dayBookings = bookings.filter(b => b.date === dateStr).sort((a, b) => a.startTime.localeCompare(b.startTime));
   const list = document.getElementById('day-booking-list');
   list.innerHTML = '';
-  if (dayBookings.length === 0) {
-    list.innerHTML = '<div class="booking-empty">予約なし</div>';
-  } else {
-    dayBookings.forEach(b => list.appendChild(makeBookingItem(b)));
-  }
+  if (dayBookings.length === 0) { list.innerHTML = '<div class="booking-empty">予約なし</div>'; }
+  else { dayBookings.forEach(b => list.appendChild(makeBookingItem(b))); }
 }
 
 function makeBookingItem(b) {
   const item = document.createElement('div');
   item.className = 'booking-item';
-
   const bar = document.createElement('div');
   bar.className = 'booking-color-bar';
   bar.style.background = b.color;
-
   const body = document.createElement('div');
   body.className = 'booking-body';
-  // ① 予約者を右側(×ボタンの隣)ではなく本文内に、②JOB: メンバー: ラベル付き
   body.innerHTML = `
     <div class="booking-time">${b.startTime} — ${b.endTime}</div>
-    <div class="booking-owner-line">
-      <div class="booking-owner-dot" style="background:${b.color}"></div>
-      <span style="color:var(--text);font-weight:500">${escHtml(b.userName)}</span>
-    </div>
+    <div class="booking-owner-line"><div class="booking-owner-dot" style="background:${b.color}"></div><span style="color:var(--text);font-weight:500">${escHtml(b.userName)}</span></div>
     <div class="booking-job">JOB: ${escHtml(b.title)}</div>
     <div class="booking-members-line">メンバー: ${escHtml(b.members)}</div>
   `;
   body.addEventListener('click', () => openDetailModal(b));
-
-  item.appendChild(bar);
-  item.appendChild(body);
-
-  const canDelete = isAdmin || (currentUser && currentUser.userId === b.userId);
+  item.appendChild(bar); item.appendChild(body);
   const canEdit = isAdmin || (currentUser && currentUser.userId === b.userId);
-
   if (canEdit) {
     const editBtn = document.createElement('button');
     editBtn.className = 'booking-delete-btn';
@@ -896,15 +657,13 @@ function makeBookingItem(b) {
     editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(b); });
     item.appendChild(editBtn);
   }
-
-  if (canDelete) {
+  if (canEdit) {
     const del = document.createElement('button');
     del.className = 'booking-delete-btn';
     del.textContent = '×';
     del.addEventListener('click', (e) => { e.stopPropagation(); deleteBooking(b.id); });
     item.appendChild(del);
   }
-
   return item;
 }
 
@@ -917,17 +676,13 @@ function changeMonth(dir) {
   renderCalendar();
 }
 
-// LIST VIEW
 function renderList() {
   const section = document.getElementById('list-section');
   const today = new Date(); today.setHours(0,0,0,0);
   const future = bookings.filter(b => new Date(b.date + 'T00:00:00') >= today).sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
-
   if (future.length === 0) { section.innerHTML = '<div class="booking-empty" style="padding:48px 0;">予約はありません</div>'; return; }
-
   const groups = {};
   future.forEach(b => { if (!groups[b.date]) groups[b.date] = []; groups[b.date].push(b); });
-
   section.innerHTML = '';
   Object.keys(groups).sort().forEach(date => {
     const [y, m, d] = date.split('-').map(Number);
@@ -954,7 +709,6 @@ function renderList() {
   });
 }
 
-// DETAIL MODAL
 function openDetailModal(b) {
   document.getElementById('detail-color-bar').style.background = b.color;
   document.getElementById('detail-time').textContent = `${b.date}  ${b.startTime} — ${b.endTime}`;
@@ -962,7 +716,6 @@ function openDetailModal(b) {
   document.getElementById('detail-owner-dot').style.background = b.color;
   document.getElementById('detail-owner').textContent = b.userName;
   document.getElementById('detail-members').textContent = b.members;
-
   let createdText = '—';
   if (b.createdAt) {
     const d = new Date(b.createdAt);
@@ -973,10 +726,8 @@ function openDetailModal(b) {
     }
   }
   document.getElementById('detail-createdat').textContent = createdText;
-
   const actions = document.getElementById('detail-actions');
   actions.innerHTML = '<button class="btn-secondary" onclick="closeDetailModal()">閉じる</button>';
-
   const canEdit = isAdmin || (currentUser && currentUser.userId === b.userId);
   if (canEdit) {
     const editBtn = document.createElement('button');
@@ -985,22 +736,18 @@ function openDetailModal(b) {
     editBtn.onclick = () => { closeDetailModal(); openEditModal(b); };
     actions.appendChild(editBtn);
   }
-
-  const canDelete = isAdmin || (currentUser && currentUser.userId === b.userId);
-  if (canDelete) {
+  if (canEdit) {
     const btn = document.createElement('button');
     btn.className = 'btn-danger';
     btn.textContent = '削除';
     btn.onclick = () => { closeDetailModal(); deleteBooking(b.id); };
     actions.appendChild(btn);
   }
-
   document.getElementById('detail-modal').classList.add('open');
 }
 
 function closeDetailModal() { document.getElementById('detail-modal').classList.remove('open'); }
 
-// ⑥ EDIT MODAL
 function openEditModal(b) {
   document.getElementById('booking-modal-title').textContent = '予約を編集';
   document.getElementById('bk-edit-id').value = b.id;
@@ -1013,7 +760,6 @@ function openEditModal(b) {
   document.getElementById('booking-modal').classList.add('open');
 }
 
-// BOOKING MODAL
 function openBookingModal() {
   if (!currentUser || currentUser.userId === '__admin__') { showToast('ユーザーとしてログインしてください', true); return; }
   document.getElementById('booking-modal-title').textContent = '予約を追加';
@@ -1037,36 +783,16 @@ async function submitBooking() {
   const end   = document.getElementById('bk-end').value;
   const title = document.getElementById('bk-title').value.trim();
   const members = document.getElementById('bk-members').value.trim();
-
   if (!date || !start || !end || !title) { document.getElementById('bk-error').textContent = '日付・時間・JOBは必須です'; return; }
   if (start >= end) { document.getElementById('bk-error').textContent = '終了時間は開始時間より後にしてください'; return; }
-
-  // 重複チェック（編集時は自分自身を除外）
-  const conflict = bookings.find(b =>
-    b.date === date &&
-    b.id !== editId &&
-    !(end <= b.startTime || start >= b.endTime)
-  );
+  const conflict = bookings.find(b => b.date === date && b.id !== editId && !(end <= b.startTime || start >= b.endTime));
   if (conflict) { document.getElementById('bk-error').textContent = `その時間帯はすでに「${conflict.title}」が予約されています`; return; }
-
   let res;
   if (editId) {
-    // 編集
-    res = await api({
-      action: 'updateBooking',
-      bookingId: editId,
-      date, startTime: start, endTime: end, title, members,
-      userId: currentUser.userId, isAdmin
-    });
+    res = await api({ action: 'updateBooking', bookingId: editId, date, startTime: start, endTime: end, title, members, userId: currentUser.userId, isAdmin });
   } else {
-    // 新規
-    res = await api({
-      action: 'addBooking',
-      date, startTime: start, endTime: end, title, members,
-      userName: currentUser.userName, userId: currentUser.userId, color: currentUser.color
-    });
+    res = await api({ action: 'addBooking', date, startTime: start, endTime: end, title, members, userName: currentUser.userName, userId: currentUser.userId, color: currentUser.color });
   }
-
   if (res.ok) {
     closeBookingModal();
     showToast(editId ? '予約を更新しました' : '予約しました');
@@ -1080,16 +806,10 @@ async function submitBooking() {
 async function deleteBooking(id) {
   if (!confirm('この予約を削除しますか？')) return;
   const res = await api({ action: 'deleteBooking', bookingId: id, userId: currentUser.userId, isAdmin });
-  if (res.ok) {
-    showToast('削除しました');
-    await loadBookings();
-    if (selectedDate) renderDayPanel(selectedDate);
-  } else {
-    showToast(res.error || 'エラーが発生しました', true);
-  }
+  if (res.ok) { showToast('削除しました'); await loadBookings(); if (selectedDate) renderDayPanel(selectedDate); }
+  else { showToast(res.error || 'エラーが発生しました', true); }
 }
 
-// ADMIN
 async function saveAdminPass() {
   const pass = document.getElementById('admin-new-pass').value;
   if (!pass) { showToast('パスワードを入力してください', true); return; }
@@ -1118,7 +838,6 @@ function renderAdminBookings() {
   sorted.forEach(b => list.appendChild(makeBookingItem(b)));
 }
 
-// PAGE NAV
 function switchPage(name) {
   ['calendar','list','admin'].forEach(p => {
     document.getElementById(`page-${p}`).classList.toggle('active', p === name);
@@ -1129,7 +848,6 @@ function switchPage(name) {
   if (name === 'list') renderList();
 }
 
-// API
 async function api(data) {
   if (!GAS_URL || GAS_URL.includes('ここに')) return { ok: false, error: 'GAS_URL が設定されていません。' };
   return new Promise((resolve) => {
