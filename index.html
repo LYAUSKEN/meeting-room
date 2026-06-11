@@ -58,7 +58,7 @@ html, body {
 }
 
 .app-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -98,6 +98,52 @@ html, body {
 .icon-btn:hover { border-color: var(--text); color: var(--text); }
 
 /* ============================================================
+   MEMBER BAR (③ ユーザー一覧バー)
+============================================================ */
+.member-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.member-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 2px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.member-slot-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.member-slot-name {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1.2;
+  min-height: 11px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.member-slot.occupied .member-slot-name {
+  color: var(--text);
+}
+
+/* ============================================================
    CALENDAR NAV
 ============================================================ */
 .cal-nav {
@@ -108,7 +154,7 @@ html, body {
 }
 
 .cal-month {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -139,6 +185,7 @@ html, body {
 .cal-weekday {
   text-align: center;
   font-size: 10px;
+  font-family: var(--sans);
   color: var(--faint);
   letter-spacing: 0.1em;
   padding: 4px 0;
@@ -185,6 +232,7 @@ html, body {
 .cal-cell.selected { background: var(--card); border-color: var(--border2); }
 
 .cal-day-num {
+  font-family: var(--sans);
   font-size: 13px;
   font-weight: 400;
   line-height: 1;
@@ -225,8 +273,9 @@ html, body {
 }
 
 .day-panel-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 14px;
+  font-weight: 500;
   letter-spacing: 0.05em;
 }
 
@@ -275,16 +324,18 @@ html, body {
   padding: 10px 12px;
 }
 
+/* ① 予約時間を大きく */
 .booking-time {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.03em;
+  margin-bottom: 3px;
 }
 
 .booking-title {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
   margin-bottom: 4px;
 }
 
@@ -352,7 +403,7 @@ html, body {
 }
 
 .modal-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -454,7 +505,7 @@ html, body {
 }
 
 .detail-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
@@ -526,7 +577,7 @@ html, body {
 }
 
 .auth-logo {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -551,8 +602,9 @@ html, body {
 }
 
 .auth-card-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 15px;
+  font-weight: 500;
   margin-bottom: 20px;
   letter-spacing: 0.05em;
 }
@@ -647,8 +699,8 @@ html, body {
 .list-color-bar { width: 4px; flex-shrink: 0; }
 .list-body { flex: 1; padding: 10px 12px; }
 
-.list-time { font-size: 11px; color: var(--muted); }
-.list-title { font-size: 14px; font-weight: 500; margin: 2px 0; }
+.list-time { font-size: 15px; font-weight: 700; color: var(--text); }
+.list-title { font-size: 12px; color: var(--muted); margin: 2px 0; }
 .list-owner { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
 .list-owner-dot { width: 6px; height: 6px; border-radius: 50%; }
 
@@ -657,8 +709,9 @@ html, body {
 ============================================================ */
 .admin-section { padding: 16px; }
 .admin-section-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 14px;
+  font-weight: 500;
   letter-spacing: 0.08em;
   margin-bottom: 12px;
   padding-bottom: 8px;
@@ -701,11 +754,15 @@ html, body {
 </head>
 <body>
 
-<!-- ============================================================
-     設定：GAS の URL をここに入力
-============================================================ -->
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbytIjWBo_eyZAz8MW0fXIdlSUyz9kvmeP7HXkFpz22vkWp0ajsirEIcBJ7sGc3vsxb41A/exec";
+
+// 12名分の固定カラーパレット
+const USER_COLORS = [
+  '#4A90D9', '#E84B6A', '#2ECC71', '#F39C12',
+  '#9B59B6', '#1ABC9C', '#E74C3C', '#3498DB',
+  '#F1C40F', '#E67E22', '#27AE60', '#8E44AD'
+];
 </script>
 
 <div id="auth-screen" class="auth-screen">
@@ -782,6 +839,9 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbytIjWBo_eyZAz8MW0fXIdl
         </div>
       </div>
     </header>
+
+    <!-- ③ メンバーバー（12名分） -->
+    <div class="member-bar" id="member-bar"></div>
 
     <!-- Calendar Page -->
     <div id="page-calendar" class="page active">
@@ -923,9 +983,10 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbytIjWBo_eyZAz8MW0fXIdl
 // ============================================================
 // STATE
 // ============================================================
-let currentUser = null;   // { userId, userName, color }
+let currentUser = null;
 let isAdmin = false;
 let bookings = [];
+let allUsers = [];   // 登録ユーザー一覧（最大12名）
 let currentYear, currentMonth;
 let selectedDate = null;
 
@@ -1010,7 +1071,6 @@ async function doAdminLogin() {
     if (res.firstTime) {
       showToast('初回ログイン：パスワードを設定してください');
     }
-    // 管理者はゲストとして入る
     currentUser = { userId: '__admin__', userName: '管理者', color: '#888' };
     localStorage.setItem('mrUser', JSON.stringify(currentUser));
     localStorage.setItem('mrAdmin', '1');
@@ -1047,7 +1107,36 @@ function showMainApp() {
     document.getElementById('nav-admin').style.display = '';
   }
 
-  loadBookings();
+  loadAll();
+}
+
+async function loadAll() {
+  // ユーザー一覧と予約を並行取得
+  const [usersRes, bookingsRes] = await Promise.all([
+    api({ action: 'getUsers' }),
+    api({ action: 'getBookings' })
+  ]);
+
+  if (usersRes.ok) {
+    allUsers = usersRes.users || [];
+    renderMemberBar();
+  }
+
+  if (bookingsRes.ok) {
+    bookings = (bookingsRes.bookings || []).map(b => {
+      let d = b.date;
+      if (d instanceof Date) {
+        d = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      } else if (typeof d === 'string' && d.length > 10) {
+        d = d.slice(0, 10);
+      }
+      return { ...b, date: d };
+    });
+    renderCalendar();
+    renderList();
+    if (isAdmin) renderAdminBookings();
+    if (selectedDate) renderDayPanel(selectedDate);
+  }
 }
 
 async function loadBookings() {
@@ -1066,6 +1155,34 @@ async function loadBookings() {
     renderList();
     if (isAdmin) renderAdminBookings();
     if (selectedDate) renderDayPanel(selectedDate);
+  }
+}
+
+// ============================================================
+// ③ MEMBER BAR
+// ============================================================
+function renderMemberBar() {
+  const bar = document.getElementById('member-bar');
+  bar.innerHTML = '';
+
+  for (let i = 0; i < 12; i++) {
+    const user = allUsers[i] || null;
+    const color = USER_COLORS[i];
+
+    const slot = document.createElement('div');
+    slot.className = 'member-slot' + (user ? ' occupied' : '');
+
+    const dot = document.createElement('div');
+    dot.className = 'member-slot-dot';
+    dot.style.background = user ? (user.color || color) : 'var(--border2)';
+
+    const name = document.createElement('div');
+    name.className = 'member-slot-name';
+    name.textContent = user ? user.userName : '';
+
+    slot.appendChild(dot);
+    slot.appendChild(name);
+    bar.appendChild(slot);
   }
 }
 
@@ -1117,7 +1234,6 @@ function renderCalendar() {
     num.textContent = c.day;
     cell.appendChild(num);
 
-    // dots for bookings
     const dayBookings = bookings.filter(b => b.date === dateStr);
     if (dayBookings.length > 0) {
       const dots = document.createElement('div');
@@ -1279,7 +1395,6 @@ function openDetailModal(b) {
   document.getElementById('detail-owner').textContent = b.userName;
   document.getElementById('detail-members').textContent = b.members;
 
-  // 予約日時（UTC → 日本時間に変換して表示）
   let createdText = '—';
   if (b.createdAt) {
     const d = new Date(b.createdAt);
@@ -1346,7 +1461,6 @@ async function submitBooking() {
     document.getElementById('bk-error').textContent = '終了時間は開始時間より後にしてください'; return;
   }
 
-  // 重複チェック
   const conflict = bookings.find(b =>
     b.date === date &&
     !(end <= b.startTime || start >= b.endTime)
@@ -1367,8 +1481,8 @@ async function submitBooking() {
   if (res.ok) {
     closeBookingModal();
     showToast('予約しました');
+    selectedDate = date;
     await loadBookings();
-    selectDate(date);
   } else {
     document.getElementById('bk-error').textContent = res.error || 'エラーが発生しました';
   }
@@ -1447,7 +1561,7 @@ function switchPage(name) {
 // ============================================================
 async function api(data) {
   if (!GAS_URL || GAS_URL.includes('ここに')) {
-    return { ok: false, error: 'GAS_URL が設定されていません。HTMLファイルの GAS_URL を更新してください。' };
+    return { ok: false, error: 'GAS_URL が設定されていません。' };
   }
   return new Promise((resolve) => {
     const cbName = 'jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
@@ -1493,7 +1607,6 @@ function showToast(msg, isError = false) {
   setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 
-// Close modals on overlay click
 document.getElementById('booking-modal').addEventListener('click', function(e) {
   if (e.target === this) closeBookingModal();
 });
