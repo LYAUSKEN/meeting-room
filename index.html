@@ -832,6 +832,18 @@ async function renderAdminUsers() {
     const row = document.createElement('div');
     row.className = 'admin-user-row';
     row.innerHTML = `<div class="admin-user-name"><div class="admin-user-dot" style="background:${u.color}"></div>${escHtml(u.userName)}</div>`;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-danger';
+    delBtn.textContent = '削除';
+    delBtn.style.padding = '4px 12px';
+    delBtn.style.fontSize = '12px';
+    delBtn.onclick = async () => {
+      if (!confirm(`${u.userName}を削除しますか？`)) return;
+      const r = await api({ action: 'deleteUser', userName: u.userName });
+      if (r.ok) { showToast('削除しました'); renderAdminUsers(); }
+      else { showToast(r.error || 'エラー', true); }
+    };
+    row.appendChild(delBtn);
     list.appendChild(row);
   });
 }
